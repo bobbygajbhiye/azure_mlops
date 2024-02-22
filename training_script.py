@@ -54,7 +54,7 @@ class SpamClassification():
 
     def create_pipeline(self):
         '''
-        IRIS Data training and Validation
+        SPAM Data training and Validation
         '''        
         self.datastore = Datastore.get(self.workspace, self.workspace.get_default_datastore().name)
         print("Received datastore")
