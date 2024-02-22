@@ -61,7 +61,7 @@ steps:
     azureSubscription: 'service_connection'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
-    inlineScript: 'az ml run submit-script -g $(ml.resourceGroup) -w $(ml.workspace) -e $(ml.experimentName) --ct $(ml.computeName) -c training_script --source-directory . --path environment_setup -t ./metadata/run.json training_script.py --container_name spam_classification_container --input_csv spam.csv --model_path ./models/spam_model.pkl --artifact_loc ./outputs/models/ --dataset_name spam_ds --dataset_desc "Spam Classifier Data Set"'
+    inlineScript: 'az ml run submit-script -g $(ml.resourceGroup) -w $(ml.workspace) -e $(ml.experimentName) --ct $(ml.computeName) -c spam_training --source-directory . --path environment_setup -t ./metadata/run.json training_script.py --container_name spam_classification_container --input_csv spam.csv --model_path ./models/spam_model.pkl --artifact_loc ./outputs/models/ --dataset_name spam_ds --dataset_desc "Spam Classifier Data Set"'
   displayName: 'run script'
 - task: AzureCLI@2
   inputs:
