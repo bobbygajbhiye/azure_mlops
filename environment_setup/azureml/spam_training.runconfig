@@ -1,0 +1,32 @@
+framework: Python
+script: training_script.py
+communicator: None
+autoPrepareEnvironment: true
+maxRunDurationSeconds:
+nodeCount: 1
+environment:
+  name: spam_demo
+  python:
+    userManagedDependencies: false
+    interpreterPath: python
+    condaDependenciesFile: .azureml/conda_dependencies.yml
+    baseCondaEnvironment:
+  docker:
+    enabled: true
+    baseImage: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04
+    sharedVolumes: true
+    gpuSupport: false
+    shmSize: 1g
+    arguments: []
+history:
+  outputCollection: true
+  snapshotProject: true
+  directoriesToWatch:
+  - logs
+dataReferences:
+  workspaceblobstore:
+    dataStoreName: workspaceblobstore
+    pathOnDataStore: spam_classification_container
+    mode: download
+    overwrite: true
+    pathOnCompute: 
