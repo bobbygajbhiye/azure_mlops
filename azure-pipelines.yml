@@ -1,19 +1,91 @@
-# Starter pipeline
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
 trigger:
-- main
+- none
+#- master
 
 pool:
-  vmImage: ubuntu-latest
+  name: Default
+  #name: Azure Pipelines
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: 'echo "##vso[task.setvariable variable=LD_LIBRARY_PATH;]:/home/bobby/myagent/_work/_tool/Python/3.11.8/x64/lib/"'
+  displayName: 'set LD_LIBRARY_PATH'
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.11'
+    addToPath: true
+    architecture: 'x64'
+  displayName: 'download python'
+- task: Bash@3
+  inputs:
+    filePath: 'environment_setup/install-requirements.sh'
+  displayName: 'download requirements'
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'service_connection'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az extension add -n azure-cli-ml'
+  displayName: 'install azure cli'
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'service_connection'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az ml workspace create -g $(ml.resourceGroup) -w $(ml.workspace) -l $(ml.region) --exist-ok --yes'
+  displayName: 'create workspace'
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'service_connection'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az ml computetarget create amlcompute -g $(ml.resourceGroup) -w $(ml.workspace) -n $(ml.computeName) -s $(ml.computeVMSize) --min-nodes $(ml.computeMinNodes) --max-nodes $(ml.computeMaxNodes) --idle-seconds-before-scaledown $(ml.computeIdleSecs)'
+  displayName: 'create compute'
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'service_connection'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az ml datastore upload -w $(ml.workspace) -g $(ml.resourceGroup) -n $(az ml datastore show-default -w $(ml.workspace) -g $(ml.resourceGroup) --query name -o tsv) -p data -u spam_classification_container'
+  displayName: 'create datastore'
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: 'mkdir metadata && mkdir models'
+  displayName: 'create model directory'
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'service_connection'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az ml run submit-script -g $(ml.resourceGroup) -w $(ml.workspace) -e $(ml.experimentName) --ct $(ml.computeName) -c training_script --source-directory . --path environment_setup -t ./metadata/run.json training_script.py --container_name spam_classification_container --input_csv spam.csv --model_path ./models/spam_model.pkl --artifact_loc ./outputs/models/ --dataset_name spam_ds --dataset_desc "Spam Classifier Data Set"'
+  displayName: 'run script'
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'service_connection'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'az ml model register -g $(ml.resourceGroup) -w $(ml.workspace) -n IRIS --asset-path outputs/models/ -d "Spam Classifier" --tag "model"="Naive Bayes"  --model-framework Custom -f ./metadata/run.json -t metadata/model.json'
+  displayName: 'register model'
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)'
+    Contents: |
+      **/metadata/*
+      **/environment_setup/*
+      **/deployment/*
+      **/inference/*
+      **/tests/smoke/*
+      **/outputs/prediction.csv
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '$(Pipeline.Workspace)'
+    artifact: 'spam_classifier'
+    publishLocation: 'pipeline'
