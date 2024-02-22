@@ -39,7 +39,7 @@ class SpamClassification():
             data_ds : Azure ML Dataset object
         '''
         datastore_paths = [(self.datastore, os.path.join(container_name,file_name))]
-        data_ds = Dataset.Tabular.from_delimited_files(path=datastore_paths, encoding=FileEncoding.LATIN1)
+        data_ds = Dataset.Tabular.from_delimited_files(path=datastore_paths, encoding=FileEncoding.ASCII)
         #data_ds = Dataset.File.from_files(path=datastore_paths)
         dataset_name = self.args.dataset_name     
         if dataset_name not in self.workspace.datasets:
