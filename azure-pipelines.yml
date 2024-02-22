@@ -66,7 +66,7 @@ steps:
     azureSubscription: 'service_connection'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
-    inlineScript: 'az ml model register -g $(ml.resourceGroup) -w $(ml.workspace) -n IRIS --asset-path outputs/models/ -d "Spam Classifier" --tag "model"="Naive Bayes"  --model-framework Custom -f ./metadata/run.json -t metadata/model.json'
+    inlineScript: 'az ml model register -g $(ml.resourceGroup) -w $(ml.workspace) -n SPAM --asset-path outputs/models/ -d "Spam Classifier" --tag "model"="Naive Bayes"  --model-framework Custom -f ./metadata/run.json -t metadata/model.json'
   displayName: 'register model'
 - task: CopyFiles@2
   inputs:
