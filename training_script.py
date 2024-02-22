@@ -58,7 +58,7 @@ class SpamClassification():
         self.datastore = Datastore.get(self.workspace, self.workspace.get_default_datastore().name)
         print("Received datastore")
         input_ds = self.get_files_from_datastore(self.args.container_name,self.args.input_csv)
-        final_df = input_ds.to_pandas_dataframe()
+        final_df = input_ds.to_pandas_dataframe(encoding="latin-1")
         print("Input DF Info",final_df.info())
         print("Input DF Head",final_df.head())
 
