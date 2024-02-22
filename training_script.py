@@ -39,7 +39,8 @@ class SpamClassification():
             data_ds : Azure ML Dataset object
         '''
         datastore_paths = [(self.datastore, os.path.join(container_name,file_name))]
-        data_ds = Dataset.Tabular.from_delimited_files(path=datastore_paths)
+        #data_ds = Dataset.Tabular.from_delimited_files(path=datastore_paths)
+        data_ds = Dataset.File.from_files(path=datastore_paths)
         dataset_name = self.args.dataset_name     
         if dataset_name not in self.workspace.datasets:
             data_ds = data_ds.register(workspace=self.workspace,
@@ -58,7 +59,8 @@ class SpamClassification():
         self.datastore = Datastore.get(self.workspace, self.workspace.get_default_datastore().name)
         print("Received datastore")
         input_ds = self.get_files_from_datastore(self.args.container_name,self.args.input_csv)
-        final_df = input_ds.to_pandas_dataframe(encoding="latin-1")
+        #final_df = input_ds.to_pandas_dataframe(encoding="latin-1")
+        final_df = pd.from_csv(input_ds, encoding="latin-1")
         print("Input DF Info",final_df.info())
         print("Input DF Head",final_df.head())
 
