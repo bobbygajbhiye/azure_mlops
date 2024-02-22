@@ -35,7 +35,7 @@ steps:
     azureSubscription: 'service_connection'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
-    inlineScript: 'az ml workspace create -g $(ml.resourceGroup) -w $(ml.workspace) -l $(ml.region) --exist-ok --yes'
+    inlineScript: 'az ml workspace create -g $(ml.resourceGroup) -w $(ml.workspace) -l $(ml.region) --debug'
   displayName: 'create workspace'
 - task: AzureCLI@2
   inputs:
