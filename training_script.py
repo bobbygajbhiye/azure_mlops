@@ -76,6 +76,7 @@ class SpamClassification():
         y_pred = model.predict(X_test)
         print("Model Score : ", model.score(X_test,y_test))
         os.mkdir('models')
+        joblib.dump(cv, self.args.cv_model_path)
         joblib.dump(model, self.args.model_path)
 
         self.validate(y_test, y_pred, X_test)
@@ -140,6 +141,7 @@ if __name__ == "__main__":
     parser.add_argument('--dataset_name', type=str, help='Dataset name to store in workspace')
     parser.add_argument('--dataset_desc', type=str, help='Dataset description')
     parser.add_argument('--model_path', type=str, help='Path to store the model')
+    parser.add_argument('--cv_model_path', type=str, help='Path to store the countvectorizer model')
     parser.add_argument('--artifact_loc', type=str, 
                         help='DevOps artifact location to store the model', default='')
     args = parser.parse_args()

@@ -10,11 +10,12 @@ def init():
     Initialize required models:
         Get the IRIS Model from Model Registry and load
     '''
-    global prediction_dc
+    global cv
     global model
-    model_path = os.path.join(os.getenv('AZUREML_MODEL_DIR'), 'models', 'iris_model.pkl')
+    cv_path = os.path.join(os.getenv('AZUREML_MODEL_DIR'), 'models', 'cv_model.pkl')
+    model_path = os.path.join(os.getenv('AZUREML_MODEL_DIR'), 'models', 'spam_model.pkl')
     model = joblib.load(model_path)
-    print('IRIS model loaded...')
+    print('SPAM model loaded...')
 
 def create_response(predicted_lbl):
     '''
