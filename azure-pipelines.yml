@@ -11,11 +11,6 @@ pool:
   #name: Azure Pipelines
 
 steps:
-- task: Bash@3
-  inputs:
-    targetType: 'inline'
-    script: 'echo "##vso[task.setvariable variable=LD_LIBRARY_PATH;]:/home/bobby/myagent/_work/_tool/Python/3.11.8/x64/lib/"'
-  displayName: 'set LD_LIBRARY_PATH'
 - task: UsePythonVersion@0
   inputs:
     versionSpec: '3.8'
