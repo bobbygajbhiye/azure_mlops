@@ -17,4 +17,4 @@ def test_prediction(scoreurl):
     headers = {'Content-Type':'application/json'}
     resp = requests.post(scoreurl, json=json.loads(json.dumps(req_sample)), headers=headers)
     resp_json = json.loads(resp.text)
-    assert resp_json['output']['predicted_species'] == "1"
+    assert resp_json['output']['predicted_label'] == "0"

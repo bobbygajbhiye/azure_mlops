@@ -82,9 +82,12 @@ class SpamClassification():
         self.validate(y_test, y_pred, X_test)
 
         match = re.search('([^\/]*)$', self.args.model_path)
+        match2 = re.search('([^\/]*)$', self.args.cv_model_path)
         # Upload Model to Run artifacts
         self.run.upload_file(name=self.args.artifact_loc + match.group(1),
                                 path_or_stream=self.args.model_path)
+        self.run.upload_file(name=self.args.artifact_loc + match2.group(1),
+                                path_or_stream=self.args.cv_model_path)
 
         print("Run Files : ", self.run.get_file_names())
         self.run.complete()
