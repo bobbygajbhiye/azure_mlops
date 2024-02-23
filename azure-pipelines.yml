@@ -5,8 +5,8 @@ variables:
 - group: "spam_classifier_integration"
 
 trigger:
-- none
-#- master
+#- none
+- master
 
 pool:
   name: Default
