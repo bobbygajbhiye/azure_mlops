@@ -115,11 +115,14 @@ class SpamClassification():
         '''
         Create prediction results as a CSV
         '''
-        pred_output = {"Actual Species" : y_true['label'].values, "Predicted Species": y_pred['label'].values}        
-        pred_df = pd.DataFrame(pred_output)
-        pred_df = pred_df.reset_index()
-        X_test = X_test.reset_index()
-        final_df = pd.concat([X_test, pred_df], axis=1)
+        #pred_output = {"Actual Species" : y_true['label'].values, "Predicted Species": y_pred['label'].values}        
+        #pred_df = pd.DataFrame(pred_output)
+        #pred_df = pred_df.reset_index()
+        #X_test = X_test.reset_index()
+        #final_df = pd.concat([X_test, pred_df], axis=1)
+        pred_output = {"message" : X_test, "Actual values" : y_true, "Predicted values": y_pred}
+        final_df = pd.DataFrame(pred_output)
+        
         final_df.to_csv(name+".csv", index=False)
         self.run.upload_file(name="./outputs/"+name+".csv",path_or_stream=name+".csv")
 
@@ -130,8 +133,9 @@ class SpamClassification():
 
         self.create_confusion_matrix(y_true, y_pred, "confusion_matrix")
 
-        y_pred_df = pd.DataFrame(y_pred, columns = ['label'])
-        self.create_outputs(y_true, y_pred_df, X_test, "predictions")
+        #y_pred_df = pd.DataFrame(y_pred, columns = ['label'])
+        #self.create_outputs(y_true, y_pred_df, X_test, "predictions")
+        self.create_outputs(y_true, y_pred, X_test, "predictions")
         self.run.tag("SpamClassifierFinalRun")   
 
 if __name__ == "__main__":
