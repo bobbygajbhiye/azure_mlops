@@ -8,7 +8,7 @@ import traceback
 def init():
     '''
     Initialize required models:
-        Get the IRIS Model from Model Registry and load
+        Get the SPAM Classifier Model from Model Registry and load
     '''
     global cv_model
     global model
@@ -22,7 +22,7 @@ def create_response(predicted_lbl):
     '''
     Create the Response object
     Arguments :
-        predicted_label : Predicted IRIS Species
+        predicted_label : Predicted Spam category
     Returns :
         Response JSON object
     '''
@@ -33,11 +33,11 @@ def create_response(predicted_lbl):
 
 def run(raw_data):
     '''
-    Get the inputs and predict the IRIS Species
+    Get the inputs and predict the Spam category
     Arguments : 
-        raw_data : SepalLengthCm,SepalWidthCm,PetalLengthCm,PetalWidthCm
+        raw_data : message
     Returns :
-        Predicted IRIS Species
+        Predicted Spam category
     '''
     try:
         data = json.loads(raw_data)

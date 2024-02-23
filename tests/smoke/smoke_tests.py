@@ -1,7 +1,7 @@
 import requests
 import json
 
-req_sample = {"SepalLengthCm": 6.6, "SepalWidthCm": 3, "PetalLengthCm": 4.4, "PetalWidthCm": 1.4}
+req_sample = {"input": "I see the letter B on my car"}
 
 def test_ml_service(scoreurl):
     assert scoreurl != None
