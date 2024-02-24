@@ -11,10 +11,10 @@ This repository is dedicated to sharing insights and challenges faced in impleme
 </div>
 Deploying machine learning models to production can be complex and fraught with challenges. Recognizing the scarcity of detailed, step-by-step guides, this repository offers comprehensive insights into each process step. Below, you'll find a summary of the steps I followed, accompanied by short descriptions to provide context and guidance.
 
-1. Get Free Trial Azure Subscription
+1. Get Free Trial Azure Subscription<br />
 Start by signing up for a free trial Azure subscription to access Azure services. It's an essential first step to utilize Microsoft's cloud resources for deploying machine learning models.
 
-2. Create Resource Group Manually
+2. Create Resource Group Manually<br />
 A resource group is a container that holds related resources for an Azure solution. Creating a resource group manually is necessary for organizing the resources you'll need for the MLOps pipeline.
 
 3. Register for Essential Resource Providers
