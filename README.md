@@ -3,13 +3,13 @@
   <h1 align="center">Azure MLOps CI/CD Pipeline Implementation</h1>
 </div>
 
-This repository is dedicated to sharing insights and challenges faced in implementing an MLOps CI/CD pipeline using Azure. From training a simple machine learning model to deploying it production-ready using Azure MLOps principles, the journey entails numerous steps, each with its own set of challenges. This documentation aims to serve as a detailed guide, shedding light on each step involved in the pipeline and the issues faced during implementation.
+Recently, I deployed a machine learning model into Production using Azure CI CD pipeline. I observed that training a model and deploying it using mlops are two different things. Mlops seems easy but a lot of issues are being faced while implementing it and detailed step by step knowledge base is also unavailable. To share the knowledge and details about the issues I faced, I am sharing the whole python code to train a sample machine learning model and deploy it using azure mlops CI CD pipeline in this repository. 
 
 <br />
 <div align="center">
   <h2 align="center">Getting Started</h1>
 </div>
-Deploying machine learning models to production can be complex and fraught with challenges. Recognizing the scarcity of detailed, step-by-step guides, this repository offers comprehensive insights into each process step. Below, you'll find a summary of the steps I followed, accompanied by short descriptions to provide context and guidance.
+Below, you'll find a summary of the steps I followed, accompanied by short descriptions to provide context and guidance.
 
 1. Get Free Trial Azure Subscription<br />
 Start by signing up for a free trial Azure subscription to access Azure services. It's an essential first step to utilize Microsoft's cloud resources for deploying machine learning models.
@@ -60,6 +60,8 @@ Similar to step 8, create a variables group specifically for the release pipelin
 Linking variables groups to the release pipeline grants it access to necessary configurations, fostering a smooth deployment process.
 
 17. Run Release Pipeline<br />
-Finally, run the release pipeline to deploy the machine learning model to the production environment. Monitor the process and verify successful deployment.<br /><br />
+Finally, run the release pipeline to deploy the machine learning model to the production environment. Monitor the process and verify successful deployment.<br />
 
-This guide aims to demystify the process of deploying machine learning models using Azure MLOps CI/CD pipeline, making it accessible and understandable. Contributions and discussions are welcome to enhance this guide further. Happy coding and deploying!
+<br />
+
+Contributions and discussions are welcome to enhance this guide further. Happy coding and deploying!
