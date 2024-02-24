@@ -64,4 +64,8 @@ Finally, run the release pipeline to deploy the machine learning model to the pr
 
 <br />
 
+![Alt text](CLI%20Commands/Screenshots/ci_pipeline.JPG?raw=true "CI Pipeline")
+
+<br />
+
 Contributions and discussions are welcome to enhance this guide further. Happy coding and deploying!
