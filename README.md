@@ -38,28 +38,32 @@ Create a variables group in Azure DevOps to manage and organize variables used a
 9. Give Variables Group Access Permission to Pipeline
 Configuring access permissions ensures that your pipeline can securely access and utilize the variables defined in the variables group.
 
-10. Create Agent<br />
-Create an agent in Azure Pipelines. Agents run build and deployment jobs in your DevOps CI/CD pipelines.
+10. Create self-hosted Agent<br />
+Create an self-hosted agent in Azure Pipelines. Agents run build and deployment jobs in your DevOps CI/CD pipelines. Azure provide Azure-hosted agent pools like Github actions, but a form need to be filled to enable the Azure-hosted agent. Instead of waiting for Azure-hosted agent, I followed below youtube link to create VM and my own agent.
+  https://www.youtube.com/watch?v=Hy6fne9oQJM&t=557s
 
-11. Run the Pipeline and Check Created Artifacts<br />
+11. Install Docker Engine on self-hosted Agent Linux Server<br />
+Our model will be trained and deployed in Docker environment. We will be building a docker image of our Python program. This image will be build on the Docker Engine running on our agent server.
+
+12. Run the Pipeline and Check Created Artifacts<br />
 Trigger the pipeline run to check the creation of artifacts. Artifacts are the outputs of the build process, serving as deployment units.
 
-12. Enable Release Pipelines from Pipeline Settings<br />
+13. Enable Release Pipelines from Pipeline Settings<br />
 Enable release pipelines in Azure Pipelines settings to manage deployment stages and environments efficiently.
 
-13. Create New Release Pipeline and Stage<br />
+14. Create New Release Pipeline and Stage<br />
 Set up a new release pipeline and configure its stages. This defines the sequence and condition under which your model is deployed across different environments.
 
-14. Change Agent Job Name and Pool in Release Pipeline<br />
+15. Change Agent Job Name and Pool in Release Pipeline<br />
 Adjust the agent job name and switch the agent pool to default in the release pipeline settings. This ensures the proper execution environment for deployment tasks.
 
-15. Create Variables Group for Release Pipeline<br />
+16. Create Variables Group for Release Pipeline<br />
 Similar to step 8, create a variables group specifically for the release pipeline to manage deployment-related variables effectively.
 
-16. Link Variables Groups to Release Pipeline<br />
+17. Link Variables Groups to Release Pipeline<br />
 Linking variables groups to the release pipeline grants it access to necessary configurations, fostering a smooth deployment process.
 
-17. Run Release Pipeline<br />
+18. Run Release Pipeline<br />
 Finally, run the release pipeline to deploy the machine learning model to the production environment. Monitor the process and verify successful deployment.<br />
 
 <br />
