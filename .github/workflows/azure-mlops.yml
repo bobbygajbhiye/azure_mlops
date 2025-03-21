@@ -1,0 +1,36 @@
+name: Azure MLops Pipeline
+
+on:
+  push:
+    branches:
+      - master
+
+env:
+  ML_RESOURCE_GROUP: ${{ secrets.ML_RESOURCE_GROUP }}
+  ML_WORKSPACE: ${{ secrets.ML_WORKSPACE }}
+  ML_REGION: ${{ secrets.ML_REGION }}
+  ML_COMPUTE_NAME: ${{ secrets.ML_COMPUTE_NAME }}
+  ML_COMPUTE_VM_SIZE: ${{ secrets.ML_COMPUTE_VM_SIZE }}
+  ML_COMPUTE_MIN_NODES: ${{ secrets.ML_COMPUTE_MIN_NODES }}
+  ML_COMPUTE_MAX_NODES: ${{ secrets.ML_COMPUTE_MAX_NODES }}
+  ML_COMPUTE_IDLE_SECS: ${{ secrets.ML_COMPUTE_IDLE_SECS }}
+  ML_EXPERIMENT_NAME: ${{ secrets.ML_EXPERIMENT_NAME }}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.8'
+        architecture: 'x64'
+
+    - name: Install dependencies
+      run: |
+        chmod +x environment_setup/install-requirements.sh
+        ./environment_setup/install-requirements.sh
