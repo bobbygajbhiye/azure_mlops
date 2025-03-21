@@ -80,7 +80,7 @@ jobs:
     #    cp -r metadata environment_setup deployment inference tests/smoke outputs/prediction.csv $(Build.ArtifactStagingDirectory)
 
     - name: Upload Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v2
       with:
         name: spam_classifier
         path: |
