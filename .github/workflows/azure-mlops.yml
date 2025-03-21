@@ -35,3 +35,52 @@ jobs:
       run: |
         chmod +x environment_setup/install-requirements.sh
         ./environment_setup/install-requirements.sh
+
+    - name: Install Azure CLI
+      run: |
+        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+    - name: Login to Azure
+      run: |
+        echo "$AZURE_CREDENTIALS" > azure_credentials.json
+        az login --service-principal -u $(jq -r .clientId azure_credentials.json) -p $(jq -r .clientSecret azure_credentials.json) --tenant $(jq -r .tenantId azure_credentials.json)
+        
+    - name: Install Azure ML extension
+      run: |
+        az extension add -n azure-cli-ml
+
+    - name: Create Azure ML Workspace
+      run: |
+        az ml workspace create -g $ML_RESOURCE_GROUP -w $ML_WORKSPACE -l $ML_REGION --exist-ok --yes
+
+    - name: Create Compute Target
+      run: |
+        az ml computetarget create amlcompute -g $ML_RESOURCE_GROUP -w $ML_WORKSPACE -n $ML_COMPUTE_NAME -s $ML_COMPUTE_VM_SIZE --min-nodes $ML_COMPUTE_MIN_NODES --max-nodes $ML_COMPUTE_MAX_NODES --idle-seconds-before-scaledown $ML_COMPUTE_IDLE_SECS
+
+    - name: Create Datastore
+      run: |
+        az ml datastore upload -w $ML_WORKSPACE -g $ML_RESOURCE_GROUP -n $(az ml datastore show-default -w $ML_WORKSPACE -g $ML_RESOURCE_GROUP --query name -o tsv) -p data -u spam_classification_container
+
+    - name: Create Model Directory
+      run: |
+        mkdir -p metadata
+        mkdir -p models
+
+    - name: Run Training Script
+      run: |
+        az ml run submit-script -g $ML_RESOURCE_GROUP -w $ML_WORKSPACE -e $ML_EXPERIMENT_NAME --ct $ML_COMPUTE_NAME -c spam_training --source-directory . --path environment_setup -t ./metadata/run.json training_script.py --container_name spam_classification_container --input_csv spam.csv --model_path ./models/spam_model.pkl --cv_model_path ./models/cv_model.pkl --artifact_loc ./outputs/models/ --dataset_name spam_ds --dataset_desc "Spam Classifier Data Set"
+
+    - name: Register Model
+      run: |
+        az ml model register -g $ML_RESOURCE_GROUP -w $ML_WORKSPACE -n SPAM --asset-path outputs/models/ -d "Spam Classifier" --tag "model"="Naive Bayes"  --model-framework Custom -f ./metadata/run.json -t metadata/model.json
+
+    - name: Copy Files
+      run: |
+        mkdir -p $(Build.ArtifactStagingDirectory)
+        cp -r metadata environment_setup deployment inference tests/smoke outputs/prediction.csv $(Build.ArtifactStagingDirectory)
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: spam_classifier
+        path: $(Build.ArtifactStagingDirectory)
