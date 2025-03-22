@@ -55,7 +55,7 @@ jobs:
     - name: Create Azure ML Workspace
     #az ml workspace create --resource-group $ML_RESOURCE_GROUP --workspace-name $ML_WORKSPACE --location $ML_REGION --exist-ok --yes
       run: |
-        az ml workspace create --resource-group $ML_RESOURCE_GROUP --name $ML_WORKSPACE --location $ML_REGION
+        az ml workspace create --resource-group $ML_RESOURCE_GROUP --workspace-name $ML_WORKSPACE --location $ML_REGION
 
     - name: Create Compute Target
       run: |
