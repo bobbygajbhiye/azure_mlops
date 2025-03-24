@@ -139,6 +139,17 @@ class SpamClassification():
         #y_pred_df = pd.DataFrame(y_pred, columns = ['label'])
         #self.create_outputs(y_true, y_pred_df, X_test, "predictions")
         self.create_outputs(y_true, y_pred, X_test, "predictions")
+
+        current_directory = os.getcwd()
+        print(f"Present Working Directory: {current_directory}")
+
+        # List the files and directories in the current working directory
+        files_and_dirs = os.listdir(current_directory)
+        print("\nFiles and Directories in Current Directory:")
+        for item in files_and_dirs:
+            print(item)
+        print("\nend")
+
         self.run.tag("SpamClassifierFinalRun")   
 
 if __name__ == "__main__":
