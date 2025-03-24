@@ -86,7 +86,6 @@ jobs:
         cp -r deployment/* ${{ github.workspace }}/artifact-staging/
         cp -r inference/* ${{ github.workspace }}/artifact-staging/
         cp -r tests/smoke/* ${{ github.workspace }}/artifact-staging/
-        cp predictions.csv ${{ github.workspace }}/artifact-staging/
   
     - name: Upload Pipeline Artifact
       uses: actions/upload-artifact@v4
