@@ -78,20 +78,18 @@ jobs:
       run: |
         az ml model register -g $ML_RESOURCE_GROUP -w $ML_WORKSPACE -n SPAM --asset-path outputs/models/ -d "Spam Classifier" --tag "model"="Naive Bayes"  --model-framework Custom -f ./metadata/run.json -t metadata/model.json
 
-    #- name: Copy Files
-    #  run: |
-    #    mkdir -p $(Build.ArtifactStagingDirectory)
-    #    cp -r metadata environment_setup deployment inference tests/smoke outputs/prediction.csv $(Build.ArtifactStagingDirectory)
-
-    #- name: Upload Artifact
-    #  uses: actions/upload-artifact@v2
-    #  with:
-    #    name: spam_classifier
-    #    path: |
-    #      **/metadata/*
-    #      **/environment_setup/*
-    #      **/deployment/*
-    #      **/inference/*
-    #      **/tests/smoke/*
-    #      **/outputs/prediction.csv
-    #
+    - name: Copy Artifacts
+      run: |
+        mkdir -p ${{ github.workspace }}/artifact-staging
+        cp -r metadata/* ${{ github.workspace }}/artifact-staging/
+        cp -r environment_setup/* ${{ github.workspace }}/artifact-staging/
+        cp -r deployment/* ${{ github.workspace }}/artifact-staging/
+        cp -r inference/* ${{ github.workspace }}/artifact-staging/
+        cp -r tests/smoke/* ${{ github.workspace }}/artifact-staging/
+        cp outputs/prediction.csv ${{ github.workspace }}/artifact-staging/
+  
+    - name: Upload Pipeline Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: spam_classifier
+        path: ${{ github.workspace }}/artifact-staging/
