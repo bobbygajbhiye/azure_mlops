@@ -150,6 +150,19 @@ class SpamClassification():
             print(item)
         print("\nend")
 
+        import shutil
+
+        # Define the source file path and the destination directory
+        source_file = "predictions.csv"  # Replace with the path of the file to be copied
+        destination_dir = "inference/"  # Replace with the path of the destination directory
+
+        try:
+            # Copy the file
+            shutil.copy(source_file, destination_dir)
+            print(f"File '{source_file}' has been copied to '{destination_dir}'.")
+        except Exception as e:
+            pass
+
         self.run.tag("SpamClassifierFinalRun")   
 
 if __name__ == "__main__":
