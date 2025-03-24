@@ -1,25 +1,95 @@
-name: Debug Upload Artifact
+name: Azure MLops Pipeline
 
 on:
   push:
     branches:
-      - '*'
+      - github_actions
+
+env:
+  ML_RESOURCE_GROUP: ${{ secrets.ML_RESOURCE_GROUP }}
+  ML_WORKSPACE: ${{ secrets.ML_WORKSPACE }}
+  ML_REGION: ${{ secrets.ML_REGION }}
+  ML_COMPUTE_NAME: ${{ secrets.ML_COMPUTE_NAME }}
+  ML_COMPUTE_VM_SIZE: ${{ secrets.ML_COMPUTE_VM_SIZE }}
+  ML_COMPUTE_MIN_NODES: ${{ secrets.ML_COMPUTE_MIN_NODES }}
+  ML_COMPUTE_MAX_NODES: ${{ secrets.ML_COMPUTE_MAX_NODES }}
+  ML_COMPUTE_IDLE_SECS: ${{ secrets.ML_COMPUTE_IDLE_SECS }}
+  ML_EXPERIMENT_NAME: ${{ secrets.ML_EXPERIMENT_NAME }}
+  AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
 jobs:
-  test-upload:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Create Test Directory
-      run: |
-        mkdir test-directory
-        echo "This is a test file" > test-directory/test-file.txt
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.8'
+        architecture: 'x64'
 
-    - name: Upload Test Artifact
+    - name: Install dependencies
+      run: |
+        chmod +x environment_setup/install-requirements.sh
+        ./environment_setup/install-requirements.sh
+
+    - name: Install Azure CLI
+      run: |
+        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+    - name: Login to Azure
+      run: |
+        echo "$AZURE_CREDENTIALS" > azure_credentials.json
+        az login --service-principal -u $(jq -r .clientId azure_credentials.json) -p $(jq -r .clientSecret azure_credentials.json) --tenant $(jq -r .tenantId azure_credentials.json)
+      #uses: azure/login@v1
+      #with:
+      #  creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Install Azure ML extension
+      run: |
+        az extension add -n azure-cli-ml
+
+    - name: Create Azure ML Workspace
+    ##az ml workspace create --resource-group $ML_RESOURCE_GROUP --workspace-name $ML_WORKSPACE --location $ML_REGION --exist-ok --yes
+      run: |
+        az ml workspace create --resource-group $ML_RESOURCE_GROUP --workspace-name $ML_WORKSPACE --location $ML_REGION --exist-ok --yes
+
+    - name: Create Compute Target
+      run: |
+        az ml computetarget create amlcompute -g $ML_RESOURCE_GROUP -w $ML_WORKSPACE -n $ML_COMPUTE_NAME -s $ML_COMPUTE_VM_SIZE --min-nodes $ML_COMPUTE_MIN_NODES --max-nodes $ML_COMPUTE_MAX_NODES --idle-seconds-before-scaledown $ML_COMPUTE_IDLE_SECS
+
+    - name: Create Datastore
+      run: |
+        az ml datastore upload -w $ML_WORKSPACE -g $ML_RESOURCE_GROUP -n $(az ml datastore show-default -w $ML_WORKSPACE -g $ML_RESOURCE_GROUP --query name -o tsv) -p data -u spam_classification_container
+
+    - name: Create Model Directory
+      run: |
+        mkdir -p metadata
+        mkdir -p models
+
+    - name: Run Training Script
+      run: |
+        az ml run submit-script -g $ML_RESOURCE_GROUP -w $ML_WORKSPACE -e $ML_EXPERIMENT_NAME --ct $ML_COMPUTE_NAME -c spam_training --source-directory . --path environment_setup -t ./metadata/run.json training_script.py --container_name spam_classification_container --input_csv spam.csv --model_path ./models/spam_model.pkl --cv_model_path ./models/cv_model.pkl --artifact_loc ./outputs/models/ --dataset_name spam_ds --dataset_desc "Spam Classifier Data Set"
+
+    - name: Register Model
+      run: |
+        az ml model register -g $ML_RESOURCE_GROUP -w $ML_WORKSPACE -n SPAM --asset-path outputs/models/ -d "Spam Classifier" --tag "model"="Naive Bayes"  --model-framework Custom -f ./metadata/run.json -t metadata/model.json
+
+    - name: Copy Artifacts
+      run: |
+        mkdir -p ${{ github.workspace }}/artifact-staging
+        cp -r metadata/* ${{ github.workspace }}/artifact-staging/
+        cp -r environment_setup/* ${{ github.workspace }}/artifact-staging/
+        cp -r deployment/* ${{ github.workspace }}/artifact-staging/
+        cp -r inference/* ${{ github.workspace }}/artifact-staging/
+        cp -r tests/smoke/* ${{ github.workspace }}/artifact-staging/
+        cp outputs/prediction.csv ${{ github.workspace }}/artifact-staging/
+  
+    - name: Upload Pipeline Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: test-artifact
-        path: test-directory/
+        name: spam_classifier
+        path: ${{ github.workspace }}/artifact-staging/
