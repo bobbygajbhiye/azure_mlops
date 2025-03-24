@@ -3,7 +3,7 @@ name: Debug Upload Artifact
 on:
   push:
     branches:
-      - github-actions
+      - github_actions
 
 jobs:
   test-upload:
