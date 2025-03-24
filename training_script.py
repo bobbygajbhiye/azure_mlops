@@ -144,7 +144,7 @@ class SpamClassification():
         print(f"Present Working Directory: {current_directory}")
 
         # List the files and directories in the current working directory
-        files_and_dirs = os.listdir(current_directory)
+        files_and_dirs = os.listdir(current_directory+"/outputs")
         print("\nFiles and Directories in Current Directory:")
         for item in files_and_dirs:
             print(item)
