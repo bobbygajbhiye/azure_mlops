@@ -3,7 +3,7 @@ name: Azure MLops Pipeline
 on:
   push:
     branches:
-      - github_actions
+      - main
 
 env:
   ML_RESOURCE_GROUP: ${{ secrets.ML_RESOURCE_GROUP }}

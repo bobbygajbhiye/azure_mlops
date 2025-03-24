@@ -139,31 +139,6 @@ class SpamClassification():
         #y_pred_df = pd.DataFrame(y_pred, columns = ['label'])
         #self.create_outputs(y_true, y_pred_df, X_test, "predictions")
         self.create_outputs(y_true, y_pred, X_test, "predictions")
-
-        current_directory = os.getcwd()
-        print(f"Present Working Directory: {current_directory}")
-
-        # List the files and directories in the current working directory
-        files_and_dirs = os.listdir(current_directory+"/outputs")
-        print("\nFiles and Directories in Current Directory:")
-        for item in files_and_dirs:
-            print(item)
-        print("\nend")
-
-        import shutil
-
-        # Define the source file path and the destination directory
-        source_file = f"{current_directory}/predictions.csv"  # Replace with the path of the file to be copied
-        destination_dir = f"{current_directory}/inference/"  # Replace with the path of the destination directory
-
-        try:
-            # Copy the file
-            shutil.copy(source_file, destination_dir)
-            print(f"File '{source_file}' has been copied to '{destination_dir}'.")
-        except Exception as e:
-            print("Exception while copying predictions file.")
-            pass
-
         self.run.tag("SpamClassifierFinalRun")   
 
 if __name__ == "__main__":
