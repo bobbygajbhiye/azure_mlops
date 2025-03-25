@@ -1,6 +1,6 @@
-entryScript: inference/score.py
+entryScript: artifact-staging/score.py
 runtime: python
-condaFile: deployment/conda_dependencies.yml
+condaFile: artifact-staging/conda_dependencies.yml
 extraDockerfileSteps:
 schemaFile:
 sourceDirectory: .
