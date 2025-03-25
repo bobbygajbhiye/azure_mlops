@@ -53,7 +53,7 @@ jobs:
       # Step 2: Deploy Model to Azure Container Instances
     - name: Deploy SPAM Model
       run: |
-        az ml model deploy -g $ML_RESOURCE_GROUP -w $ML_WORKSPACE -n $SERVICE_NAME --model SPAM:1 --dc deployment/aciDeploymentConfig.yml --ic deployment/inferenceConfig.yml --description "SPAM Classifier deployed in ACI" --overwrite
+        az ml model deploy -g $ML_RESOURCE_GROUP -w $ML_WORKSPACE -n $SERVICE_NAME --model "SPAM:1" --dc deployment/aciDeploymentConfig.yml --ic deployment/inferenceConfig.yml --description "SPAM Classifier deployed in ACI" --overwrite
 
   test:
     name: Execute Tests
