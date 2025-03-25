@@ -55,7 +55,6 @@ jobs:
             --ic deployment/inferenceConfig.yml \
             --description "SPAM Classifier deployed in ACI" \
             --overwrite
-        working-directory: spam_classifier
 
   test:
     name: Execute Tests
@@ -81,7 +80,6 @@ jobs:
               -w ${{ secrets.AZURE_WORKSPACE_NAME }} \
               -n ${{ github.event.inputs.service_name }} \
               --query scoringUri -o tsv)
-        working-directory: spam_classifier/a/tests/smoke
 
       # Step 3: Publish Test Results
       - name: Upload Test Results
