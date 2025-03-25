@@ -1,9 +1,7 @@
 name: Azure MLOps Integration
 
 on:
-  push:
-    branches:
-      - github_actions
+  workflow_dispatch:
 
 env:
   ML_RESOURCE_GROUP: ${{ secrets.ML_RESOURCE_GROUP }}
