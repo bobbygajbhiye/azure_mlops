@@ -1,12 +1,9 @@
 name: Azure MLOps Deployment
 
 on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment to deploy to'
-        required: true
-        default: 'dev'
+  push:
+    branches:
+      - github_actions
 
 jobs:
   setup:
