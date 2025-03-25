@@ -1,9 +1,12 @@
-name: Deploy SPAM Model
+name: Azure MLOps Deployment
 
 on:
-  push:
-    branches:
-      - github_actions
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'dev'
 
 jobs:
   setup:
@@ -26,7 +29,6 @@ jobs:
         run: |
           chmod +x environment_setup/install-requirements.sh
           ./environment_setup/install-requirements.sh
-        working-directory: spam_classifier
 
       # Step 4: Install Azure CLI and Extensions
       - name: Install Azure CLI and ML Extension
