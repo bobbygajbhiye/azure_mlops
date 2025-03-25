@@ -16,6 +16,7 @@ env:
   ML_COMPUTE_IDLE_SECS: ${{ secrets.ML_COMPUTE_IDLE_SECS }}
   ML_EXPERIMENT_NAME: ${{ secrets.ML_EXPERIMENT_NAME }}
   AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+  SERVICE_NAME: "spam-classifier-service"
 
 jobs:
   build:
