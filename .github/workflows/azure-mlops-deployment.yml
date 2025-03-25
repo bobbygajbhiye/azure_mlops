@@ -5,56 +5,54 @@ on:
     branches:
       - github_actions
 
+env:
+  ML_RESOURCE_GROUP: ${{ secrets.ML_RESOURCE_GROUP }}
+  ML_WORKSPACE: ${{ secrets.ML_WORKSPACE }}
+  ML_REGION: ${{ secrets.ML_REGION }}
+  ML_COMPUTE_NAME: ${{ secrets.ML_COMPUTE_NAME }}
+  ML_COMPUTE_VM_SIZE: ${{ secrets.ML_COMPUTE_VM_SIZE }}
+  ML_COMPUTE_MIN_NODES: ${{ secrets.ML_COMPUTE_MIN_NODES }}
+  ML_COMPUTE_MAX_NODES: ${{ secrets.ML_COMPUTE_MAX_NODES }}
+  ML_COMPUTE_IDLE_SECS: ${{ secrets.ML_COMPUTE_IDLE_SECS }}
+  ML_EXPERIMENT_NAME: ${{ secrets.ML_EXPERIMENT_NAME }}
+  AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+
 jobs:
-  setup:
-    name: Set Up Environment
-    runs-on: ubuntu-latest
-
-    steps:
-      # Step 1: Check out the repository
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      # Step 2: Use Python 3.8
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.8
-
-      # Step 3: Install Requirements
-      - name: Install Requirements
-        run: |
-          chmod +x environment_setup/install-requirements.sh
-          ./environment_setup/install-requirements.sh
-
-      # Step 4: Install Azure CLI and Extensions
-      - name: Install Azure CLI and ML Extension
-        run: |
-          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
-          az extension add -n azure-cli-ml
-
   deploy:
-    name: Deploy Model to ACI
     runs-on: ubuntu-latest
-    needs: setup
 
     steps:
-      # Step 1: Check out the repository
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.8'
+        architecture: 'x64'
+
+    - name: Install dependencies
+      run: |
+        chmod +x environment_setup/install-requirements.sh
+        ./environment_setup/install-requirements.sh
+
+    - name: Install Azure CLI
+      run: |
+        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+    - name: Login to Azure
+      run: |
+        echo "$AZURE_CREDENTIALS" > azure_credentials.json
+        az login --service-principal -u $(jq -r .clientId azure_credentials.json) -p $(jq -r .clientSecret azure_credentials.json) --tenant $(jq -r .tenantId azure_credentials.json)
+
+    - name: Install Azure ML extension
+      run: |
+        az extension add -n azure-cli-ml
 
       # Step 2: Deploy Model to Azure Container Instances
-      - name: Deploy SPAM Model
-        run: |
-          az ml model deploy \
-            -g ${{ secrets.AZURE_RESOURCE_GROUP }} \
-            -w ${{ secrets.AZURE_WORKSPACE_NAME }} \
-            -n ${{ github.event.inputs.service_name }} \
-            -f metadata/model.json \
-            --dc deployment/aciDeploymentConfig.yml \
-            --ic deployment/inferenceConfig.yml \
-            --description "SPAM Classifier deployed in ACI" \
-            --overwrite
+    - name: Deploy SPAM Model
+      run: |
+        az ml model deploy -g $ML_RESOURCE_GROUP -w $ML_WORKSPACE -n ${{ github.event.inputs.service_name }} -f metadata/model.json --dc deployment/aciDeploymentConfig.yml --ic deployment/inferenceConfig.yml --description "SPAM Classifier deployed in ACI" --overwrite
 
   test:
     name: Execute Tests
