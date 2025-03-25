@@ -1,7 +1,9 @@
 name: Azure MLOps Integration
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - github_actions
 
 env:
   ML_RESOURCE_GROUP: ${{ secrets.ML_RESOURCE_GROUP }}
@@ -90,3 +92,7 @@ jobs:
       with:
         name: spam_classifier
         path: ${{ github.workspace }}/artifact-staging/
+
+    - name: Deploy SPAM Model
+      run: |
+        az ml model deploy -g $ML_RESOURCE_GROUP -w $ML_WORKSPACE -n $SERVICE_NAME -f metadata/model.json --dc deployment/aciDeploymentConfig.yml --ic deployment/inferenceConfig.yml --description "SPAM Classifier deployed in ACI" --overwrite
