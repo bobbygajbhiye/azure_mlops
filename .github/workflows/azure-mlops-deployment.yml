@@ -32,10 +32,10 @@ jobs:
         python-version: '3.8'
         architecture: 'x64'
 
-    - name: Install dependencies
-      run: |
-        chmod +x environment_setup/install-requirements.sh
-        ./environment_setup/install-requirements.sh
+    #- name: Install dependencies
+    #  run: |
+    #    chmod +x environment_setup/install-requirements.sh
+    #    ./environment_setup/install-requirements.sh
 
     - name: Install Azure CLI
       run: |
@@ -53,7 +53,7 @@ jobs:
       # Step 2: Deploy Model to Azure Container Instances
     - name: Deploy SPAM Model
       run: |
-        az ml model deploy -g $ML_RESOURCE_GROUP -w $ML_WORKSPACE -n $SERVICE_NAME --dc deployment/aciDeploymentConfig.yml --ic deployment/inferenceConfig.yml --description "SPAM Classifier deployed in ACI" --overwrite
+        az ml model deploy -g $ML_RESOURCE_GROUP -w $ML_WORKSPACE -n $SERVICE_NAME --model SPAM --dc deployment/aciDeploymentConfig.yml --ic deployment/inferenceConfig.yml --description "SPAM Classifier deployed in ACI" --overwrite
 
   test:
     name: Execute Tests
