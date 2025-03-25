@@ -53,8 +53,8 @@ jobs:
     - name: Download Artifacts
       uses: actions/download-artifact@v4
       with:
-        name: build-artifact
-        path: ${{ github.workspace }}
+        name: spam_classifier
+        path: ${{ github.workspace }}/artifact-staging/
 
     - name: Deploy SPAM Model
       run: |
