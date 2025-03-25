@@ -1,11 +1,7 @@
 name: Azure MLOps Deployment
 
 on:
-  workflow_run:
-    workflows:
-      - Azure MLOps Integration
-    types:
-      - completed
+  workflow_dispatch:
 
 env:
   ML_RESOURCE_GROUP: ${{ secrets.ML_RESOURCE_GROUP }}
@@ -57,10 +53,13 @@ jobs:
       with:
         name: spam_classifier
         path: ${{ github.workspace }}/artifact-staging/
+        github-token: ${{ github.token }}
+        repository: ${{ github.repository }}
+        run-id: 14055525615
 
     - name: Deploy SPAM Model
       run: |
-        az ml model deploy -g $ML_RESOURCE_GROUP -w $ML_WORKSPACE -n $SERVICE_NAME -f ./artifact-staging/spam_classifier/model.json --dc ./artifact-staging/spam_classifier/aciDeploymentConfig.yml --ic ./artifact-staging/spam_classifier/inferenceConfig.yml --description "SPAM Classifier deployed in ACI" --overwrite
+        az ml model deploy -g $ML_RESOURCE_GROUP -w $ML_WORKSPACE -n $SERVICE_NAME -f artifact-staging/model.json --dc artifact-staging/aciDeploymentConfig.yml --ic artifact-staging/inferenceConfig.yml --description "SPAM Classifier deployed in ACI" --overwrite
 
   test:
     name: Execute Tests
@@ -82,9 +81,9 @@ jobs:
             --cov-report=xml \
             --cov-report=html \
             --scoreurl $(az ml service show \
-              -g ${{ secrets.AZURE_RESOURCE_GROUP }} \
-              -w ${{ secrets.AZURE_WORKSPACE_NAME }} \
-              -n ${{ github.event.inputs.service_name }} \
+              -g $ML_RESOURCE_GROUP \
+              -w $ML_WORKSPACE \
+              -n $SERVICE_NAME \
               --query scoringUri -o tsv)
 
       # Step 3: Publish Test Results
