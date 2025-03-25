@@ -16,7 +16,7 @@ env:
   ML_COMPUTE_IDLE_SECS: ${{ secrets.ML_COMPUTE_IDLE_SECS }}
   ML_EXPERIMENT_NAME: ${{ secrets.ML_EXPERIMENT_NAME }}
   AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-  SERVICE_NAME: "spam-classifier-service"
+  SERVICE_NAME: "GitHubActionsSpamClassifier"
 
 jobs:
   deploy:
@@ -32,10 +32,10 @@ jobs:
         python-version: '3.8'
         architecture: 'x64'
 
-    #- name: Install dependencies
-    #  run: |
-    #    chmod +x environment_setup/install-requirements.sh
-    #    ./environment_setup/install-requirements.sh
+    - name: Install dependencies
+      run: |
+        chmod +x environment_setup/install-requirements.sh
+        ./environment_setup/install-requirements.sh
 
     - name: Install Azure CLI
       run: |
