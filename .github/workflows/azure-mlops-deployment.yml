@@ -16,7 +16,7 @@ env:
   ML_COMPUTE_IDLE_SECS: ${{ secrets.ML_COMPUTE_IDLE_SECS }}
   ML_EXPERIMENT_NAME: ${{ secrets.ML_EXPERIMENT_NAME }}
   AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-  SERVICE_NAME: "spam_classifier"
+  SERVICE_NAME: "spam_classifier_service"
 
 jobs:
   deploy:
@@ -50,10 +50,15 @@ jobs:
       run: |
         az extension add -n azure-cli-ml
 
-      # Step 2: Deploy Model to Azure Container Instances
+    - name: Download Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-artifact
+        path: ${{ github.workspace }}
+
     - name: Deploy SPAM Model
       run: |
-        az ml model deploy -g $ML_RESOURCE_GROUP -w $ML_WORKSPACE -n $SERVICE_NAME --model "SPAM:1" --dc deployment/aciDeploymentConfig.yml --ic deployment/inferenceConfig.yml --description "SPAM Classifier deployed in ACI" --overwrite
+        az ml model deploy -g $ML_RESOURCE_GROUP -w $ML_WORKSPACE -n $SERVICE_NAME -f model.json --dc aciDeploymentConfig.yml --ic inferenceConfig.yml --description "SPAM Classifier deployed in ACI" --overwrite
 
   test:
     name: Execute Tests
